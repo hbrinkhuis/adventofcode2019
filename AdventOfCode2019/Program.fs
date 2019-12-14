@@ -1,19 +1,14 @@
-﻿let readlines filePath = System.IO.File.ReadLines(filePath) |> List.ofSeq |> List.map int
+﻿module Program
+    let readlines filePath = System.IO.File.ReadLines(filePath)
 
-let calculate_fuel mass = mass / 3 - 2
-
-let rec calculate_fuel_better mass = 
-    let fuel = calculate_fuel mass
-    if fuel < 0 then 0
-    else fuel + (calculate_fuel_better fuel)
-
-let dayone_partone weights = weights |> List.map calculate_fuel |> List.sum
-let dayone_parttwo weights = weights |> List.map calculate_fuel_better |> List.sum
-
-[<EntryPoint>]
-let main argv =
-    printfn "Hello World from F#!"
-    let module_weights = readlines "Resources\\day1.txt"
-    printfn "Day one puzzle one answer: %i" (dayone_partone module_weights)
-    printfn "Day one puzzle two answer: %i" (dayone_parttwo module_weights)
-    0
+    [<EntryPoint>]
+    let main argv =
+        printfn "Hello World from F#!"
+        let module_weights = readlines "Resources\\day1.txt" |> Seq.map int |> List.ofSeq
+        printfn "Day one puzzle one answer: %i" (DayOne.part_one module_weights)
+        printfn "Day one puzzle two answer: %i" (DayOne.part_two module_weights)
+        let opcodes = readlines "Resources\\day2.txt" |> Seq.map (fun x -> x.Split(',')) |> Seq.concat |> Seq.map int |> Array.ofSeq
+        printfn "Day two puzzle one answer: %i" (DayTwo.part_one opcodes)
+        let opcodes = readlines "Resources\\day2.txt" |> Seq.map (fun x -> x.Split(',')) |> Seq.concat |> Seq.map int |> Array.ofSeq
+        printfn "Day two puzzle two answer: %A" (DayTwo.part_two opcodes 19690720)
+        0
