@@ -28,20 +28,21 @@
         | None -> 0
     
     // check if one line crosses another line
-    let crosses (vertical_line: LineSegment) (horizontal_line: LineSegment) =
-        let coord_a = line_coord vertical_line
-        let coord_b = line_coord horizontal_line
-        (entry_point horizontal_line) < coord_a && (exit_point horizontal_line) > coord_a &&
-        (entry_point vertical_line) < coord_b && (exit_point vertical_line) > coord_b
+    let crosses (a: LineSegment) (b: LineSegment) =
+        let coord_a = line_coord a
+        let coord_b = line_coord b
+        (entry_point b) <= coord_a && (exit_point b) >= coord_a &&
+        (entry_point a) <= coord_b && (exit_point a) >= coord_b &&
+        a.Direction <> b.Direction
 
-    let manhattan p =
-        abs p.X + abs p.Y
+
+    // PARSING
 
     // create a line according to a number of steps and a direction, starting from the state
     let advance_line state direction steps = 
         match direction with
-        | Horizontal -> { A = state; B = { state with X = steps }; Direction = Horizontal }
-        | Vertical -> { A = state; B = { state with Y = steps }; Direction = Vertical }
+        | Horizontal -> { A = state; B = { state with X = state.X + steps }; Direction = Horizontal }
+        | Vertical -> { A = state; B = { state with Y = state.Y + steps }; Direction = Vertical }
         | None -> { A = state; B = state; Direction = None }
     
     let parse_line (next_location: string) (state: LineSegment) =
@@ -63,20 +64,31 @@
     let wire_convert (wire : string list) initialState =
         wire |> Seq.scan (fun state x -> parse_line x state) initialState |> Seq.tail
 
+
+    // AGGREGATION
+
     let part_one wires = 
         // provide the starting point (which is always 0,0)
         let origin = { X = 0; Y = 0 }
         let initialState = { A = origin; B = origin; Direction = None }
 
         // calculate wire segments
-        let wireSegments = wires |> Seq.collect (fun wire -> wire_convert wire initialState) |> List.ofSeq
+        // let wireSegments = wires |> Seq.collect (fun wire -> wire_convert wire initialState) |> List.ofSeq
+        let first_wire = wire_convert (List.head wires) initialState
+        let second_wire = wire_convert (wires |> List.item 1) initialState
 
-        let horizontals = wireSegments |> List.filter (fun f -> f.Direction = Horizontal) |> List.sortBy entry_point
-        let verticals = wireSegments |> List.filter (fun f -> f.Direction = Vertical) |> List.sortBy entry_point
+        let crossed_wires_first = first_wire |> Seq.filter (fun f -> second_wire |> Seq.exists (fun j -> crosses j f) )
 
-        // apply line sweep on the segments
-        let horizontal_crosses = horizontals |> Seq.filter (fun f -> verticals |> Seq.exists (fun j -> crosses j f) )
+        let crosspoints = crossed_wires_first |> Seq.map (fun x -> (x, second_wire |> Seq.find (fun j -> crosses j x)))
+
+        crosspoints |> Seq.map (fun x -> (line_coord (fst x)) + (line_coord (snd x))) |> Seq.min
+
+        //let horizontals = wireSegments |> List.filter (fun f -> f.Direction = Horizontal) |> List.sortBy entry_point
+        //let verticals = wireSegments |> List.filter (fun f -> f.Direction = Vertical) |> List.sortBy entry_point
+
+        //// apply line sweep on the segments
+        //let horizontal_crosses = horizontals |> Seq.filter (fun f -> verticals |> Seq.exists (fun j -> crosses j f) )
         
-        let crosspoints = horizontal_crosses |> Seq.map (fun x -> verticals |> Seq.find (fun j -> crosses j x) |> (fun y -> { X = line_coord y; Y = line_coord x }))
+        //let crosspoints = horizontal_crosses |> Seq.map (fun x -> verticals |> Seq.find (fun j -> crosses j x) |> (fun y -> { X = line_coord y; Y = line_coord x }))
 
-        crosspoints |> Seq.map (fun f -> manhattan f) |> Seq.min
+        // crosspoints |> Seq.map (fun f -> (abs f.X) + (abs f.Y)) |> Seq.filter (fun z -> z > 0) |> Seq.min
