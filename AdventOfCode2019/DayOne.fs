@@ -1,4 +1,4 @@
-﻿module DayOne
+﻿module AdventOfCode2019.DayOne
     let calculate_fuel mass = mass / 3 - 2
 
     let rec calculate_fuel_better mass = 

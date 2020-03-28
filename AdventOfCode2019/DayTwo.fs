@@ -1,4 +1,4 @@
-﻿module DayTwo
+﻿module AdventOfCode2019.DayTwo
 
     let execute opcodes position f = 
         let left = Array.get opcodes (position + 1)
