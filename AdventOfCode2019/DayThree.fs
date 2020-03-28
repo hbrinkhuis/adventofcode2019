@@ -82,13 +82,3 @@
         let crosspoints = crossed_wires_first |> Seq.map (fun x -> (x, second_wire |> Seq.find (fun j -> crosses j x)))
 
         crosspoints |> Seq.map (fun x -> (line_coord (fst x)) + (line_coord (snd x))) |> Seq.min
-
-        //let horizontals = wireSegments |> List.filter (fun f -> f.Direction = Horizontal) |> List.sortBy entry_point
-        //let verticals = wireSegments |> List.filter (fun f -> f.Direction = Vertical) |> List.sortBy entry_point
-
-        //// apply line sweep on the segments
-        //let horizontal_crosses = horizontals |> Seq.filter (fun f -> verticals |> Seq.exists (fun j -> crosses j f) )
-        
-        //let crosspoints = horizontal_crosses |> Seq.map (fun x -> verticals |> Seq.find (fun j -> crosses j x) |> (fun y -> { X = line_coord y; Y = line_coord x }))
-
-        // crosspoints |> Seq.map (fun f -> (abs f.X) + (abs f.Y)) |> Seq.filter (fun z -> z > 0) |> Seq.min
