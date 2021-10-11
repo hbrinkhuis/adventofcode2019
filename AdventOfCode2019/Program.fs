@@ -19,10 +19,7 @@
 
         // day three
         let wires = readlines @"Resources\day3.txt" |> Seq.map (fun x -> x.Split(',') |> List.ofArray ) |> List.ofSeq
-        printfn "Day three puzzle one answer: %i" (DayThree.part_one wires)
-
-        let list = [1 .. 10]
-
-        printfn "The sum of the list is %A" (List.scan(fun x state -> x * state) 1 list)
+        // printfn "Day three puzzle one answer: %i" (DayThree.part_one wires)
 
         DayThreeTakeTwo.charts wires
+        0
