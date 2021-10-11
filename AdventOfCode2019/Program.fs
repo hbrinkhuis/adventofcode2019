@@ -1,6 +1,5 @@
 ﻿module AdventOfCode2019.Program
     let readlines filePath = System.IO.File.ReadLines(filePath)
-
     let readlines2 filePath = System.IO.File.ReadAllLines(filePath)
 
     [<EntryPoint>]
@@ -22,4 +21,8 @@
         // printfn "Day three puzzle one answer: %i" (DayThree.part_one wires)
 
         DayThreeTakeTwo.charts wires
+
+        let valid_codes = DayFour.part_one [152085 .. 670283]
+
+        printfn "Day four puzzle one answer: %i" valid_codes
         0
